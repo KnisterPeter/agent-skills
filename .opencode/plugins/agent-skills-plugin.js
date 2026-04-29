@@ -1,6 +1,7 @@
 // @ts-check
 import Path from "node:path";
 import Fs from "node:fs/promises";
+import { command } from "../commands.json" with { type: "json" };
 
 /**
  * @typedef {import("@opencode-ai/plugin").Plugin} Plugin
@@ -23,11 +24,16 @@ export const OpencodeAgentSkills = async () => {
      * @param {ConfigWithSkills} config
      */
     config: async (config) => {
-      config.skills = config.skills || {};
-      config.skills.paths = config.skills.paths || [];
+      config.skills ??= {};
+      config.skills.paths ??= [];
       if (!config.skills.paths.includes(skillsDir)) {
         config.skills.paths.push(skillsDir);
       }
+
+      config.command = {
+        ...config.command,
+        ...command,
+      };
     },
     "experimental.chat.system.transform": async (input, output) => {
       output.system.push(promptPatch);
