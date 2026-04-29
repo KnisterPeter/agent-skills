@@ -1,17 +1,27 @@
+// @ts-check
 import Path from "node:path";
-import { fileURLToPath } from "node:url";
 import Fs from "node:fs/promises";
 
-const __dirname = Path.dirname(fileURLToPath(import.meta.url));
-const skillsDir = Path.resolve(__dirname, "../../skills");
+/**
+ * @typedef {import("@opencode-ai/plugin").Plugin} Plugin
+ * @typedef {import("@opencode-ai/plugin").Config} Config
+ * @typedef {Config & { skills?: { paths?: string[] } }} ConfigWithSkills
+ */
 
-export const OpencodePowerPack = async () => {
+/**
+ * @type {Plugin}
+ */
+export const OpencodeAgentSkills = async () => {
+  const skillsDir = Path.resolve(import.meta.dirname, "../../skills");
   const promptPatch = await Fs.readFile(
-    Path.resolve(__dirname, "../prompt-patch.md"),
+    Path.resolve(import.meta.dirname, "../prompt-patch.md"),
     "utf8",
   );
 
   return {
+    /**
+     * @param {ConfigWithSkills} config
+     */
     config: async (config) => {
       config.skills = config.skills || {};
       config.skills.paths = config.skills.paths || [];
